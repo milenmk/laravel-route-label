@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (! function_exists('route_enum_value')) {
     /**
      * Return the value of a BackedEnum, or string as-is.

@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Milenmk\LaravelRouteLabel;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
+use LogicException;
 use Milenmk\LaravelRouteLabel\Traits\CompilesRoutes;
 
 class LaravelRouteLabelServiceProvider extends ServiceProvider
@@ -13,13 +18,13 @@ class LaravelRouteLabelServiceProvider extends ServiceProvider
         // Extend Route with macros for label()
         Route::macro('label', function ($label) {
             if (! isset($this->action['as'])) {
-                throw new \LogicException('Cannot set a route label without a route name. Use ->name() before ->label().');
+                throw new LogicException('Cannot set a route label without a route name. Use ->name() before ->label().');
             }
 
             $label = route_enum_value($label);
 
             if (! is_string($label)) {
-                throw new \InvalidArgumentException('Enum must be string backed.');
+                throw new InvalidArgumentException('Enum must be string backed.');
             }
 
             $this->action['label'] = $label;
@@ -33,15 +38,17 @@ class LaravelRouteLabelServiceProvider extends ServiceProvider
 
         // Register @routeLink directive
         Blade::directive('routeLink', function ($expression) {
-            $compiler = new class {
+            $compiler = new class
+            {
                 use CompilesRoutes;
             };
+
             return $compiler->compileRouteLink($expression);
         });
 
         // Register routeLabel() helper (optional, but can ensure it's loaded)
         if (! function_exists('routeLabel')) {
-            require_once __DIR__ . '/Helpers/route_label.php';
+            require_once __DIR__.'/Helpers/route_label.php';
         }
     }
 

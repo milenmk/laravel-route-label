@@ -1,7 +1,9 @@
 {
     "private": true,
     "type": "module",
-    "scripts": {},
+    "scripts": {
+        "prepare": "husky install"
+    },
     "dependencies": {
         "autoprefixer": "^10.4.21"
     },
