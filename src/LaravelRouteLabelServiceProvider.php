@@ -41,9 +41,15 @@ class LaravelRouteLabelServiceProvider extends ServiceProvider
             $compiler = new class
             {
                 use CompilesRoutes;
+
+                public function render($expression): string
+                {
+                    // Call protected trait method within class scope
+                    return $this->compileRouteLink($expression);
+                }
             };
 
-            return $compiler->compileRouteLink($expression);
+            return $compiler->render($expression);
         });
 
         // Register routeLabel() helper (optional, but can ensure it's loaded)
