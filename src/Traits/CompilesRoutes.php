@@ -31,6 +31,38 @@ trait CompilesRoutes
     }
 
     /**
+     * Compile @routeLinkStart directive to open an <a> tag with attributes.
+     */
+    protected function compileRouteLinkStart($expression): string
+    {
+        // Parse the expression to extract route name and attributes
+        $args = $this->parseDirectiveArguments($expression);
+
+        $routeName = $args[0] ?? $expression;
+        $attributes = $args[1] ?? [];
+
+        // Build the attributes string
+        $attrString = '';
+        foreach ($attributes as $key => $value) {
+            if (is_bool($value)) {
+                $attrString .= $value ? " $key" : '';
+            } else {
+                $attrString .= " $key=\"$value\"";
+            }
+        }
+
+        return "<?php echo '<a href=\"'.route('{$routeName}').'\"{$attrString}>'; ?>";
+    }
+
+    /**
+     * Compile @routeLinkEnd directive to close an <a> tag.
+     */
+    protected function compileRouteLinkEnd(): string
+    {
+        return "<?php echo '</a>'; ?>";
+    }
+
+    /**
      * Parse directive arguments from expression string.
      */
     protected function parseDirectiveArguments($expression): array

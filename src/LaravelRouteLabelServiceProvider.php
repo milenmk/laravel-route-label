@@ -52,6 +52,38 @@ class LaravelRouteLabelServiceProvider extends ServiceProvider
             return $compiler->render($expression);
         });
 
+        // Register @routeLinkStart directive
+        Blade::directive('routeLinkStart', function ($expression) {
+            $compiler = new class
+            {
+                use CompilesRoutes;
+
+                public function render($expression): string
+                {
+                    // Call protected trait method within class scope
+                    return $this->compileRouteLinkStart($expression);
+                }
+            };
+
+            return $compiler->render($expression);
+        });
+
+        // Register @routeLinkEnd directive
+        Blade::directive('routeLinkEnd', function () {
+            $compiler = new class
+            {
+                use CompilesRoutes;
+
+                public function render(): string
+                {
+                    // Call protected trait method within class scope
+                    return $this->compileRouteLinkEnd();
+                }
+            };
+
+            return $compiler->render();
+        });
+
         // Register routeLabel() helper (optional, but can ensure it's loaded)
         if (! function_exists('routeLabel')) {
             require_once __DIR__.'/Helpers/route_label.php';

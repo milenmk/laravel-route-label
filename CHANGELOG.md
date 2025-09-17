@@ -1,3 +1,11 @@
+## v1.2.0
+
+#### Published at: 2025-09-17
+
+- [FEATURE] Added block blade directives `@routeLinkStart` and `@routeLinkEnd` for complex link content
+- [ENHANCEMENT] Support for links with images, multiple elements, and complex HTML structures
+- [IMPROVEMENT] Full attribute support in block directives (CSS classes, Livewire, Alpine.js, data attributes)
+
 ## v1.1.1
 
 #### Published at: 2025-09-17

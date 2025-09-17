@@ -20,6 +20,7 @@ A tiny Laravel package that lets you attach human‑friendly labels to your rout
 - **Helper**: `routeLabel('route.name')` → label or route name fallback
 - **Blade directive**: `@routeLink('route.name')` → `<a href="/...">Label</a>`
 - **Extended Blade directive**: `@routeLink('route.name', ['class' => 'btn', 'wire:navigate' => true])` → enhanced `<a>` tag with custom attributes
+- **Block Blade directives**: `@routeLinkStart('route.name', ['attributes'])` ... `@routeLinkEnd` → for complex link content
 - **Zero config**: auto‑discovered service provider, no publishing required
 
 ## Requirements
@@ -98,6 +99,44 @@ These generate enhanced anchor tags:
 ```
 
 **Note**: Boolean attributes (like `wire:navigate`) are added as attribute names only when set to `true`.
+
+### Block Blade Directives for Complex Content
+
+For links with complex content (images, multiple elements, etc.), use the block directives:
+
+```blade
+{{-- With images and complex content --}}
+@routeLinkStart('home', ['class' => 'logo-link', 'wire:navigate' => true])
+    <img class="logo" src="{{ asset('images/logo.png') }}" alt="Logo" />
+    <span class="brand-name">{{ config('app.name') }}</span>
+@routeLinkEnd
+
+{{-- With Alpine.js interactions --}}
+@routeLinkStart('profile', [
+    'class' => 'profile-link',
+    'x-data' => '{ open: false }',
+    '@click' => 'open = !open'
+])
+    <img class="avatar" src="{{ $user->avatar }}" alt="Profile" />
+    <span class="name">{{ $user->name }}</span>
+    <svg class="dropdown-icon" :class="open ? 'rotate-180' : ''">...</svg>
+@routeLinkEnd
+```
+
+These generate:
+
+```html
+<a href="/" class="logo-link" wire:navigate>
+    <img class="logo" src="/images/logo.png" alt="Logo" />
+    <span class="brand-name">My App</span>
+</a>
+
+<a href="/profile" class="profile-link" x-data="{ open: false }" @click="open = !open">
+    <img class="avatar" src="/avatar.jpg" alt="Profile" />
+    <span class="name">John Doe</span>
+    <svg class="dropdown-icon">...</svg>
+</a>
+```
 
 ## Enum Support
 
