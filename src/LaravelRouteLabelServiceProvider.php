@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Milenmk\LaravelRouteLabel;
 
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use LogicException;

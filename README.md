@@ -7,7 +7,7 @@
 <a href="https://github.com/milenmk/laravel-route-label">![GitHub User's stars](https://img.shields.io/github/stars/milenmk/laravel-route-label)</a>
 <a href="https://laravel.com/docs">![Laravel 10 Support](https://img.shields.io/badge/Laravel-10.x|11.x|12.x-orange?style=flat&logo=laravel)</a>
 <a href="https://www.php.net">![PHP Version Support](https://img.shields.io/packagist/php-v/milenmk/laravel-route-label?style=flat)</a>
-<a href="https://github.com/milenmk/laravel-route-label/blob/develop/LICENSE">![License](https://img.shields.io/packagist/l/milenmk/laravel-route-label.svg?style=flat)</a>
+<a href="https://github.com/milenmk/laravel-route-label/blob/main/LICENSE">![License](https://img.shields.io/packagist/l/milenmk/laravel-route-label.svg?style=flat)</a>
 <a href="https://github.com/milenmk/laravel-route-label/issues">![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)</a>
 <a href="https://www.patreon.com/c/LaravelAddonsbyMilen">![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat)</a>
 
