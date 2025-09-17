@@ -27,7 +27,7 @@ trait CompilesRoutes
             }
         }
 
-        return "<?php echo '<a href=\"'.route({$routeName}).'\"{$attrString}>'.routeLabel({$routeName}).'</a>'; ?>";
+        return "<?php echo '<a href=\"'.route('$routeName').'\"$attrString>'.routeLabel('$routeName').'</a>'; ?>";
     }
 
     /**

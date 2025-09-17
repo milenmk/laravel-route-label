@@ -1,3 +1,10 @@
+## v1.1.1
+
+#### Published at: 2025-09-17
+
+- [FIX] Critical bug fix for extended `@routeLink` directive - resolved "Undefined constant" error when using route names in attribute parameter
+- [FIX] Fixed route name quoting in generated PHP code to prevent PHP from treating route names as constants
+
 ## v1.1.0
 
 #### Published at: 2025-09-17
