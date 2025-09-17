@@ -1,3 +1,11 @@
+## v1.1.0
+
+#### Published at: 2025-09-17
+
+- [ENHANCEMENT] Extended `@routeLink` blade directive to accept additional HTML attributes as a second parameter
+- [FEATURE] Support for CSS classes, Livewire directives, Alpine.js directives, and custom data attributes
+- [IMPROVEMENT] Boolean attributes are properly handled (added as attribute names when true)
+
 ## v1.0.2
 
 #### Published at: 2025-09-17

@@ -19,6 +19,7 @@ A tiny Laravel package that lets you attach human‑friendly labels to your rout
 - **Localizing the label** You can also pass a translatable string `->label(__('MyLabel'))` or key `->label(__('routes.home'))` for a label
 - **Helper**: `routeLabel('route.name')` → label or route name fallback
 - **Blade directive**: `@routeLink('route.name')` → `<a href="/...">Label</a>`
+- **Extended Blade directive**: `@routeLink('route.name', ['class' => 'btn', 'wire:navigate' => true])` → enhanced `<a>` tag with custom attributes
 - **Zero config**: auto‑discovered service provider, no publishing required
 
 ## Requirements
@@ -60,6 +61,44 @@ You must call `->name()` before `->label()`.
 
 The directive compiles to an anchor tag with the route URL and label.
 
+### Extended Blade Directive with Attributes
+
+You can pass additional HTML attributes as a second parameter:
+
+```blade
+{{-- With CSS classes --}}
+@routeLink('users.index', ['class' => 'btn btn-primary'])
+
+{{-- With Livewire navigation --}}
+@routeLink('users.index', ['class' => 'nav-link', 'wire:navigate' => true])
+
+{{-- With Alpine.js directives --}}
+@routeLink('users.index', [
+    'class' => 'menu-item',
+    'x-data' => '{ open: false }',
+    'x-show' => 'open',
+    '@click' => 'open = !open'
+])
+
+{{-- With data attributes --}}
+@routeLink('users.index', [
+    'class' => 'dropdown-item',
+    'data-toggle' => 'modal',
+    'data-target' => '#userModal'
+])
+```
+
+These generate enhanced anchor tags:
+
+```html
+<a href="/users" class="btn btn-primary">Users</a>
+<a href="/users" class="nav-link" wire:navigate>Users</a>
+<a href="/users" class="menu-item" x-data="{ open: false }" x-show="open" @click="open = !open">Users</a>
+<a href="/users" class="dropdown-item" data-toggle="modal" data-target="#userModal">Users</a>
+```
+
+**Note**: Boolean attributes (like `wire:navigate`) are added as attribute names only when set to `true`.
+
 ## Enum Support
 
 You can use string‑backed Enums for labels:
@@ -91,9 +130,9 @@ Note: The `@routeLink()` directive expects a string route name (not an Enum), be
 ## Helper Reference
 
 - **`routeLabel(string|BackedEnum $name): ?string`**
-  - Returns the route label if set.
-  - Returns the route name when no label is set.
-  - Returns `null` if the route does not exist.
+    - Returns the route label if set.
+    - Returns the route name when no label is set.
+    - Returns `null` if the route does not exist.
 
 Usage examples:
 
@@ -127,13 +166,7 @@ Please see [CHANGELOG.md](CHANGELOG.md) for recent changes.
 ## Contributing
 
 - Pull requests and issues are welcome at [GitHub](https://github.com/milenmk/laravel-route-label).
-- Follow PSR‑12 and run linters/tests before submitting.
-
-### Run tests locally
-
-```bash
-vendor/bin/phpunit
-```
+- Follow PSR‑12 requirements
 
 ## Support My Work
 
