@@ -11,23 +11,25 @@ trait CompilesRoutes
      */
     protected function compileRouteLink($expression): string
     {
-        // Parse the expression to extract route name and attributes
+        // Parse the expression to extract route name and attributes as strings
         $args = $this->parseDirectiveArguments($expression);
 
-        $routeName = $args[0] ?? $expression;
-        $attributes = $args[1] ?? [];
+        $routeNameExpr = $args[0] ?? $expression;
+        $attributesExpr = $args[1] ?? '[]';
 
-        // Build the attributes string
-        $attrString = '';
-        foreach ($attributes as $key => $value) {
-            if (is_bool($value)) {
-                $attrString .= $value ? " $key" : '';
-            } else {
-                $attrString .= " $key=\"$value\"";
+        return "<?php
+            \$routeName = {$routeNameExpr};
+            \$attributes = {$attributesExpr};
+            \$attrString = '';
+            foreach (\$attributes as \$key => \$value) {
+                if (is_bool(\$value)) {
+                    \$attrString .= \$value ? \" \$key\" : '';
+                } else {
+                    \$attrString .= \" \$key=\\\"\" . htmlspecialchars(\$value, ENT_QUOTES) . \"\\\"\";
+                }
             }
-        }
-
-        return "<?php echo '<a href=\"'.route('$routeName').'\"$attrString>'.routeLabel('$routeName').'</a>'; ?>";
+            echo '<a href=\"' . route(\$routeName) . '\"' . \$attrString . '>' . routeLabel(\$routeName) . '</a>';
+        ?>";
     }
 
     /**
@@ -35,23 +37,25 @@ trait CompilesRoutes
      */
     protected function compileRouteLinkStart($expression): string
     {
-        // Parse the expression to extract route name and attributes
+        // Parse the expression to extract route name and attributes as strings
         $args = $this->parseDirectiveArguments($expression);
 
-        $routeName = $args[0] ?? $expression;
-        $attributes = $args[1] ?? [];
+        $routeNameExpr = $args[0] ?? $expression;
+        $attributesExpr = $args[1] ?? '[]';
 
-        // Build the attributes string
-        $attrString = '';
-        foreach ($attributes as $key => $value) {
-            if (is_bool($value)) {
-                $attrString .= $value ? " $key" : '';
-            } else {
-                $attrString .= " $key=\"$value\"";
+        return "<?php
+            \$routeName = {$routeNameExpr};
+            \$attributes = {$attributesExpr};
+            \$attrString = '';
+            foreach (\$attributes as \$key => \$value) {
+                if (is_bool(\$value)) {
+                    \$attrString .= \$value ? \" \$key\" : '';
+                } else {
+                    \$attrString .= \" \$key=\\\"\" . htmlspecialchars(\$value, ENT_QUOTES) . \"\\\"\";
+                }
             }
-        }
-
-        return "<?php echo '<a href=\"'.route('{$routeName}').'\"{$attrString}>'; ?>";
+            echo '<a href=\"' . route(\$routeName) . '\"' . \$attrString . '>';
+        ?>";
     }
 
     /**
@@ -67,7 +71,7 @@ trait CompilesRoutes
      */
     protected function parseDirectiveArguments($expression): array
     {
-        // Simple parsing: split by comma and evaluate each part
+        // Simple parsing: split by comma, keep as strings for runtime evaluation
         $parts = explode(',', $expression, 2);
         $args = [];
 
@@ -77,8 +81,8 @@ trait CompilesRoutes
                 continue;
             }
 
-            // Use eval to parse PHP expressions (be careful with security)
-            $args[] = eval("return $part;");
+            // Keep as string for runtime evaluation instead of compile-time eval
+            $args[] = $part;
         }
 
         return $args;

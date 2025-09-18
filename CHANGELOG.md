@@ -1,3 +1,10 @@
+## v1.2.1
+
+#### Published at: 2025-09-18
+
+- [FIX] Critical bug fix for `@routeLink` and `@routeLinkStart` directives - resolved "Undefined variable" error when using PHP variables in attribute arrays (e.g., `['class' => $class]`)
+- [IMPROVEMENT] Changed argument parsing from compile-time eval to runtime evaluation to properly support template variables
+
 ## v1.2.0
 
 #### Published at: 2025-09-17
