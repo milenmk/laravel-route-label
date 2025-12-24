@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Milenmk\LaravelRouteLabel\Traits;
 
+use BackedEnum;
+
 trait CompilesRoutes
 {
     /**
@@ -11,15 +13,14 @@ trait CompilesRoutes
      */
     protected function compileRouteLink($expression): string
     {
-        // Parse the expression to extract route name and attributes as strings
         $args = $this->parseDirectiveArguments($expression);
 
         $routeNameExpr = $args[0] ?? $expression;
         $attributesExpr = $args[1] ?? '[]';
 
         return "<?php
-            \$routeName = {$routeNameExpr};
-            \$attributes = {$attributesExpr};
+            \$routeName = $routeNameExpr;
+            \$attributes = $attributesExpr;
             \$attrString = '';
             foreach (\$attributes as \$key => \$value) {
                 if (is_bool(\$value)) {
@@ -28,7 +29,7 @@ trait CompilesRoutes
                     \$attrString .= \" \$key=\\\"\" . htmlspecialchars(\$value, ENT_QUOTES) . \"\\\"\";
                 }
             }
-            echo '<a href=\"' . route(\$routeName) . '\"' . \$attrString . '>' . routeLabel(\$routeName) . '</a>';
+            echo '<a href=\"' . route(\$routeName, [], false) . '\"' . \$attrString . '>' . routeLabel(\$routeName) . '</a>';
         ?>";
     }
 
@@ -37,15 +38,14 @@ trait CompilesRoutes
      */
     protected function compileRouteLinkStart($expression): string
     {
-        // Parse the expression to extract route name and attributes as strings
         $args = $this->parseDirectiveArguments($expression);
 
         $routeNameExpr = $args[0] ?? $expression;
         $attributesExpr = $args[1] ?? '[]';
 
         return "<?php
-            \$routeName = {$routeNameExpr};
-            \$attributes = {$attributesExpr};
+            \$routeName = $routeNameExpr;
+            \$attributes = $attributesExpr;
             \$attrString = '';
             foreach (\$attributes as \$key => \$value) {
                 if (is_bool(\$value)) {
@@ -54,7 +54,7 @@ trait CompilesRoutes
                     \$attrString .= \" \$key=\\\"\" . htmlspecialchars(\$value, ENT_QUOTES) . \"\\\"\";
                 }
             }
-            echo '<a href=\"' . route(\$routeName) . '\"' . \$attrString . '>';
+            echo '<a href=\"' . route(\$routeName, [], false) . '\"' . \$attrString . '>';
         ?>";
     }
 
@@ -71,20 +71,40 @@ trait CompilesRoutes
      */
     protected function parseDirectiveArguments($expression): array
     {
-        // Simple parsing: split by comma, keep as strings for runtime evaluation
         $parts = explode(',', $expression, 2);
         $args = [];
 
         foreach ($parts as $part) {
             $part = trim($part);
-            if (empty($part)) {
-                continue;
+            if (! empty($part)) {
+                $args[] = $part;
             }
-
-            // Keep as string for runtime evaluation instead of compile-time eval
-            $args[] = $part;
         }
 
         return $args;
+    }
+
+    /**
+     * Resolve route label dynamically (string, enum, closure, or translation key).
+     */
+    protected function resolveRouteLabel(string|BackedEnum|callable $label, array $params = []): string
+    {
+        if ($label instanceof BackedEnum) {
+            $label = $label->value;
+        }
+
+        if (is_callable($label)) {
+            $label = $label($params);
+        }
+
+        if (is_string($label) && str_starts_with($label, 'trans:')) {
+            $label = __(substr($label, 6), $params);
+        }
+
+        if (config('route-label.escape_html', true)) {
+            $label = e($label);
+        }
+
+        return $label;
     }
 }

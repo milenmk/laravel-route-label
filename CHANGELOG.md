@@ -1,3 +1,32 @@
+## v1.3.0
+
+#### Published at: 2025-12-24
+
+- [FEATURE] Added `<x-route-link />` Blade component for a more declarative approach to generating route links
+    - Supports `route` name, optional `:params` array, and `:attributes` array for full customization
+    - Boolean attributes (e.g., `wire:navigate`) are handled automatically
+    - Works with dynamic route labels, closures, translations, and Enums
+- [FEATURE] Extended route labels to support **closure-based dynamic labels** directly in route definitions
+    - Example: `->label(fn($params) => "Edit {$params['user']->name}")`
+    - Useful for runtime-generated link text (e.g., usernames)
+- [FEATURE] Added support for **translation keys** in route labels using `trans:` prefix
+    - Example: `->label('trans:routes.home')`
+    - Automatically resolves translations from `resources/lang/<locale>/routes.php`
+- [IMPROVEMENT] Enhanced `@routeLink` and block directives to handle **dynamic runtime expressions** in attributes
+    - Previously only static strings were fully supported
+    - Now PHP variables and expressions are safely evaluated
+- [IMPROVEMENT] Unified helper function `routeLabel()` and blade directives with full support for:
+    - Enums (string-backed)
+    - Closures
+    - Translation keys
+    - Runtime attributes
+- [IMPROVEMENT] Updated README with full usage examples for:
+    - Blade component
+    - Dynamic closure labels
+    - Translation-based labels
+    - Complex content with block directives
+- [MAINTENANCE] Preserved backward compatibility for all previous Blade directives (`@routeLink`, `@routeLinkStart`, `@routeLinkEnd`)
+
 ## v1.2.1
 
 #### Published at: 2025-09-18

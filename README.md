@@ -21,7 +21,7 @@ A tiny Laravel package that lets you attach human‑friendly labels to your rout
 - **Blade directive**: `@routeLink('route.name')` → `<a href="/...">Label</a>`
 - **Extended Blade directive**: `@routeLink('route.name', ['class' => 'btn', 'wire:navigate' => true])` → enhanced `<a>` tag with custom attributes
 - **Block Blade directives**: `@routeLinkStart('route.name', ['attributes'])` ... `@routeLinkEnd` → for complex link content
-- **Zero config**: auto‑discovered service provider, no publishing required
+- **Blade component**: `<x-route-link route="route.name" />`
 
 ## Requirements
 
@@ -43,75 +43,110 @@ No further setup is needed (package discovery enabled).
 ```php
 use Illuminate\Support\Facades\Route;
 
+// Simple string label
 Route::get('/users', [UserController::class, 'index'])
     ->name('users.index')
-    ->label('Users'); // attach a human-friendly label
+    ->label('Users');
+
+// Dynamic label via closure
+Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+    ->name('users.edit')
+    ->label(fn($params) => "Edit {$params['user']->name}");
+
+// Translation key
+Route::get('/home', [HomeController::class, 'index'])
+    ->name('home')
+    ->label('trans:routes.home');
+
+// String-backed Enum
+enum RouteLabel: string { case Users = 'Users'; }
+Route::get('/users', [UserController::class, 'index'])
+    ->name('users.index')
+    ->label(RouteLabel::Users);
 ```
 
-You must call `->name()` before `->label()`.
+> You must call `->name()` before `->label()`.
 
 ### 2) Use the label in Blade
 
-```blade
-{{-- Helper usage --}}
+#### Using the helper
+
+```bladehtml
 <a href="{{ route('users.index') }}">{{ routeLabel('users.index') }}</a>
-
-{{-- Or use the Blade directive --}}
-@routeLink('users.index')
+<a href="{{ route('users.edit', ['user' => $user]) }}">{{ routeLabel('users.edit', ['user' => $user]) }}</a>
 ```
 
-The directive compiles to an anchor tag with the route URL and label.
-
-### Extended Blade Directive with Attributes
-
-You can pass additional HTML attributes as a second parameter:
-
-```blade
-{{-- With CSS classes --}}
-@routeLink('users.index', ['class' => 'btn btn-primary'])
-
-{{-- With Livewire navigation --}}
-@routeLink('users.index', ['class' => 'nav-link', 'wire:navigate' => true])
-
-{{-- With Alpine.js directives --}}
-@routeLink('users.index', [
-    'class' => 'menu-item',
-    'x-data' => '{ open: false }',
-    'x-show' => 'open',
-    '@click' => 'open = !open'
-])
-
-{{-- With data attributes --}}
-@routeLink('users.index', [
-    'class' => 'dropdown-item',
-    'data-toggle' => 'modal',
-    'data-target' => '#userModal'
-])
-```
-
-These generate enhanced anchor tags:
+Renders
 
 ```html
-<a href="/users" class="btn btn-primary">Users</a>
-<a href="/users" class="nav-link" wire:navigate>Users</a>
-<a href="/users" class="menu-item" x-data="{ open: false }" x-show="open" @click="open = !open">Users</a>
-<a href="/users" class="dropdown-item" data-toggle="modal" data-target="#userModal">Users</a>
+<a href="/users">Users</a>
+<a href="/users/1/edit">Edit John</a>
 ```
 
-**Note**: Boolean attributes (like `wire:navigate`) are added as attribute names only when set to `true`.
+#### Using Blade directives
 
-### Block Blade Directives for Complex Content
+  1) Simple directive
+  
+      ```php
+      @routeLink('users.index')
+      ```
+      
+      Renders:
+      
+      ```html
+      <a href="/users">Users</a>
+      ```
+  
+  2) With additional attributes
+  
+      ```php
+      @routeLink('users.index', ['class' => 'btn btn-primary', 'wire:navigate' => true])
+      ```
+      
+      Renders:
+      
+      ```html
+      <a href="/users" class="btn btn-primary" wire:navigate>Users</a>
+      ```
+  
+  3) With Alpine.js / complex attributes
+  
+      ```php
+      @routeLink('users.index', [
+      'class' => 'menu-item',
+      'x-data' => '{ open: false }',
+      'x-show' => 'open',
+      '@click' => 'open = !open'
+      ])
+      ```
+      
+      Renders:
+      
+      ```html
+      <a href="/users" class="menu-item" x-data="{ open: false }" x-show="open" @click="open = !open">Users</a>
+      ```
 
-For links with complex content (images, multiple elements, etc.), use the block directives:
+#### Block directives for complex content
 
-```blade
-{{-- With images and complex content --}}
+```php
 @routeLinkStart('home', ['class' => 'logo-link', 'wire:navigate' => true])
     <img class="logo" src="{{ asset('images/logo.png') }}" alt="Logo" />
     <span class="brand-name">{{ config('app.name') }}</span>
 @routeLinkEnd
+```
 
-{{-- With Alpine.js interactions --}}
+Renders
+
+```html
+<a href="/" class="logo-link" wire:navigate>
+    <img class="logo" src="/images/logo.png" alt="Logo" />
+    <span class="brand-name">My App</span>
+</a>
+```
+
+Another example with Alpine.js
+
+```php
 @routeLinkStart('profile', [
     'class' => 'profile-link',
     'x-data' => '{ open: false }',
@@ -123,14 +158,9 @@ For links with complex content (images, multiple elements, etc.), use the block 
 @routeLinkEnd
 ```
 
-These generate:
+Renders
 
 ```html
-<a href="/" class="logo-link" wire:navigate>
-    <img class="logo" src="/images/logo.png" alt="Logo" />
-    <span class="brand-name">My App</span>
-</a>
-
 <a href="/profile" class="profile-link" x-data="{ open: false }" @click="open = !open">
     <img class="avatar" src="/avatar.jpg" alt="Profile" />
     <span class="name">John Doe</span>
@@ -138,33 +168,53 @@ These generate:
 </a>
 ```
 
+### 3) Using the Blade component
+
+```html
+<x-route-link route="users.index" class="btn btn-primary" />
+<x-route-link route="users.edit" :params="['user' => $user]" />
+<x-route-link route="home" />
+<x-route-link route="users.index" :attributes="['wire:navigate' => true]" />
+```
+
+Renders
+
+```html
+<a href="/users" class="btn btn-primary">Users</a>
+<a href="/users/1/edit" class="text-blue-500 hover:underline">Edit John</a>
+<a href="/" class="text-blue-500 hover:underline">Homepage</a>
+<a href="/users" class="text-blue-500 hover:underline" wire:navigate>Users</a>
+```
+
+> Boolean attributes (like `wire:navigate`) are added as attribute names only when set to `true`.
+>
+> HTML is escaped by default, configurable via `config/route-label.php`.
+> 
+> Fallbacks: if a route has no label, the route name is used (`missing_label_behavior`).
+
 ## Enum Support
 
-You can use string‑backed Enums for labels:
+You can use string-backed Enums for labels:
 
 ```php
-enum RouteLabel: string {
-    case Users = 'Users';
-}
+enum RouteLabel: string { case Users = 'Users'; }
 
 Route::get('/users', [UserController::class, 'index'])
     ->name('users.index')
-    ->label(RouteLabel::Users); // Enum is accepted
+    ->label(RouteLabel::Users);
 ```
 
 For route names (Laravel expects a string), pass the enum value:
 
 ```php
-enum RouteName: string {
-    case UsersIndex = 'users.index';
-}
+enum RouteName: string { case UsersIndex = 'users.index'; }
 
 Route::get('/users', [UserController::class, 'index'])
     ->name(RouteName::UsersIndex->value)
     ->label('Users');
 ```
 
-Note: The `@routeLink()` directive expects a string route name (not an Enum), because it internally calls `route()`.
+> The `@routeLink()` directive expects a string route name (not an Enum), because it internally calls `route()`.
 
 ## Helper Reference
 
@@ -186,6 +236,20 @@ In Blade:
 {{ routeLabel('users.index') ?? 'Unknown route' }}
 ```
 
+## Configuration (Optional / Advanced)
+
+Publish the config to customize defaults:
+
+```php
+php artisan vendor:publish --tag=route-label-config
+```
+
+* **default_link_class** → default CSS class for the Blade component
+* **escape_html** → whether labels are escaped (true by default)
+* **missing_label_behavior** → controls fallback when a label is missing
+
+> Basic usage does not require publishing the config.
+
 ## Errors and Edge Cases
 
 - **Calling `->label()` before `->name()`** will throw a `LogicException`.
@@ -197,6 +261,7 @@ In Blade:
 - **Consistency**: keep link texts centralized alongside routes.
 - **Localization friendly**: prepare for i18n by mapping names to labels.
 - **Cleaner views**: no more hard‑coded strings scattered in templates.
+- **Dynamic content**: closures allow runtime-generated labels (e.g., usernames).
 
 ## Changelog
 

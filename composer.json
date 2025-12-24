@@ -40,6 +40,11 @@
       "src/Helpers/route_label.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Milenmk\\LaravelRouteLabel\\Tests\\": "tests/"
+    }
+  },
   "extra": {
     "laravel": {
       "providers": [
