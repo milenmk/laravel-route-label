@@ -16,5 +16,7 @@ class BladeComponentTest extends TestCase
 
         $this->assertStringContainsString('<a', $html);
         $this->assertStringContainsString('class="btn"', $html);
+        $this->assertStringContainsString('Users', $html);
+        $this->assertStringContainsString('</a>', $html);
     }
 }

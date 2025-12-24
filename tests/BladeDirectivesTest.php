@@ -17,6 +17,8 @@ class BladeDirectivesTest extends TestCase
         ]);
 
         $this->assertStringContainsString('<a href="/users">', $blade);
+        $this->assertStringContainsString('Users', $blade);
+        $this->assertStringContainsString('</a>', $blade);
     }
 
     #[Test]
@@ -26,5 +28,15 @@ class BladeDirectivesTest extends TestCase
 
         $this->assertStringContainsString('class="btn"', $blade);
         $this->assertStringContainsString('<a href="/users"', $blade);
+        $this->assertStringContainsString('Users', $blade);
+        $this->assertStringContainsString('</a>', $blade);
+    }
+
+    #[Test]
+    public function route_link_start_and_end()
+    {
+        $blade = Blade::render("@routeLinkStart('users.index', ['class' => 'btn']) Content @routeLinkEnd");
+
+        $this->assertStringContainsString('<a href="/users" class="btn"> Content </a>', $blade);
     }
 }

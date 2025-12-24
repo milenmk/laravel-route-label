@@ -18,17 +18,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->app['router']->get('/users', fn () => 'users')
-            ->name('users.index')
-            ->label('Users');
-
-        $this->app['router']->get('/users/{user}', fn () => 'user')
-            ->name('users.show')
-            ->label(fn ($params) => "User {$params['user']}");
-
-        $this->app['router']->get('/home', fn () => 'home')
-            ->name('home')
-            ->label('Homepage');
+        $this->defineRoutes($this->app['router']);
     }
 
     protected function getPackageProviders($app): array
@@ -52,6 +42,10 @@ abstract class TestCase extends BaseTestCase
 
         Route::get('/users/{user}', fn () => 'user')
             ->name('users.show')
-            ->label(fn ($params) => "User {$params['user']}");
+            ->label(fn ($params) => 'User '.($params['user'] ?? ''));
+
+        Route::get('/users/{user}/posts/{post}', fn () => 'post')
+            ->name('users.posts.show')
+            ->label(fn ($params) => "Post {$params['post']} by User {$params['user']}");
     }
 }
