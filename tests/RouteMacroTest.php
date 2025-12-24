@@ -32,12 +32,12 @@ class RouteMacroTest extends TestCase
     #[Test]
     public function enum_label()
     {
-        Route::get('/posts', fn () => 'posts')
+        $router = $this->app['router'];
+        $router->get('/posts', fn () => 'posts')
             ->name('posts.index')
             ->label(TestLabel::Users);
 
-        $route = Route::getRoutes()->getByName('posts.index');
-
+        $route = $router->getRoutes()->getByName('posts.index');
         $this->assertNotNull($route);
         $this->assertEquals('Users', $route->getLabel());
     }

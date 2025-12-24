@@ -40,7 +40,8 @@ class RouteLabelHelperTest extends TestCase
     #[Test]
     public function helper_returns_label_for_enum_label()
     {
-        Route::get('/home', fn () => 'home')
+        $router = $this->app['router'];
+        $router->get('/home', fn () => 'home')
             ->name('home')
             ->label(TestLabel::Homepage);
 
