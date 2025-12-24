@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Milenmk\LaravelRouteLabel\Tests;
 
 use Exception;
-use Illuminate\Support\Facades\Route;
 use Milenmk\LaravelRouteLabel\LaravelRouteLabelServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -35,16 +34,15 @@ abstract class TestCase extends BaseTestCase
 
     protected function defineRoutes($router): void
     {
-        // Define minimal routes needed for testing
-        Route::get('/users', fn () => 'users')
+        $router->get('/users', fn () => 'users')
             ->name('users.index')
-            ->label('Users'); // must be string, enum, or closure
+            ->label('Users');
 
-        Route::get('/users/{user}', fn () => 'user')
+        $router->get('/users/{user}', fn () => 'user')
             ->name('users.show')
             ->label(fn ($params) => 'User '.($params['user'] ?? ''));
 
-        Route::get('/users/{user}/posts/{post}', fn () => 'post')
+        $router->get('/users/{user}/posts/{post}', fn () => 'post')
             ->name('users.posts.show')
             ->label(fn ($params) => "Post {$params['post']} by User {$params['user']}");
     }

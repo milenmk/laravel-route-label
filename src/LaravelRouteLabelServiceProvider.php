@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Milenmk\LaravelRouteLabel;
 
 use BackedEnum;
-use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -13,6 +12,7 @@ use InvalidArgumentException;
 use LogicException;
 use Milenmk\LaravelRouteLabel\Blade\RouteLinkComponent;
 use Milenmk\LaravelRouteLabel\Traits\CompilesRoutes;
+use UnitEnum;
 
 class LaravelRouteLabelServiceProvider extends ServiceProvider
 {
@@ -40,21 +40,27 @@ class LaravelRouteLabelServiceProvider extends ServiceProvider
         });
 
         Route::macro('getLabel', function ($params = []) {
-            $label = $this->action['label'] ?? $this->action['as'] ?? null;
+            $label = $this->action['label'] ?? null;
 
-            if ($label instanceof Closure) {
-                $label = $label($params);
+            if ($label === null) {
+                return null;
             }
 
             if ($label instanceof BackedEnum) {
                 $label = $label->value;
+            } elseif ($label instanceof UnitEnum) {
+                $label = $label->name;
+            }
+
+            if (is_callable($label)) {
+                $label = $label($params);
             }
 
             if (is_string($label) && str_starts_with($label, 'trans:')) {
                 $label = __(substr($label, 6), $params);
             }
 
-            if (config('route-label.escape_html', true)) {
+            if ($label !== null && config('route-label.escape_html', true)) {
                 $label = e($label);
             }
 

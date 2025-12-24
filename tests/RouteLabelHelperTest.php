@@ -14,7 +14,9 @@ class RouteLabelHelperTest extends TestCase
     #[Test]
     public function helper_returns_label()
     {
-        Route::get('/users', fn () => 'users')->name('users.index')->label('Users');
+        Route::get('/users', fn () => 'users')
+            ->name('users.index')
+            ->label('Users');
 
         $this->assertEquals('Users', routeLabel('users.index'));
     }
@@ -28,7 +30,9 @@ class RouteLabelHelperTest extends TestCase
     #[Test]
     public function helper_accepts_enum_route_name()
     {
-        Route::get('/users', fn () => 'users')->name('users.index')->label('Users');
+        Route::get('/users', fn () => 'users')
+            ->name('users.index')
+            ->label('Users');
 
         $this->assertEquals('Users', routeLabel(TestRoute::UsersIndex));
     }
@@ -36,7 +40,9 @@ class RouteLabelHelperTest extends TestCase
     #[Test]
     public function helper_returns_label_for_enum_label()
     {
-        Route::get('/home', fn () => 'home')->name('home')->label(TestLabel::Homepage);
+        Route::get('/home', fn () => 'home')
+            ->name('home')
+            ->label(TestLabel::Homepage);
 
         $this->assertEquals('Homepage', routeLabel('home'));
     }
