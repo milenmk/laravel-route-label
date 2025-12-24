@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Milenmk\LaravelRouteLabel\Tests;
 
 use Illuminate\Support\Facades\Route;
-use Milenmk\LaravelRouteLabel\Tests\Enums\TestLabel;
 use Milenmk\LaravelRouteLabel\Tests\Enums\TestRoute;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -40,11 +39,6 @@ class RouteLabelHelperTest extends TestCase
     #[Test]
     public function helper_returns_label_for_enum_label()
     {
-        $router = $this->app['router'];
-        $router->get('/home', fn () => 'home')
-            ->name('home')
-            ->label(TestLabel::Homepage);
-
         $this->assertEquals('Homepage', routeLabel('home'));
     }
 }

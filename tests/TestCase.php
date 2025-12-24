@@ -6,6 +6,7 @@ namespace Milenmk\LaravelRouteLabel\Tests;
 
 use Exception;
 use Milenmk\LaravelRouteLabel\LaravelRouteLabelServiceProvider;
+use Milenmk\LaravelRouteLabel\Tests\Enums\TestLabel;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -45,5 +46,13 @@ abstract class TestCase extends BaseTestCase
         $router->get('/users/{user}/posts/{post}', fn () => 'post')
             ->name('users.posts.show')
             ->label(fn ($params) => "Post {$params['post']} by User {$params['user']}");
+
+        $router->get('/home', fn () => 'home')
+            ->name('home')
+            ->label(TestLabel::Homepage);
+
+        $router->get('/posts', fn () => 'posts')
+            ->name('posts.index')
+            ->label(TestLabel::Users);
     }
 }
