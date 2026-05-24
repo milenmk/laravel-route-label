@@ -5,6 +5,10 @@
 | Version | Stage       | Environment      | Supported Until |
 |---------|-------------|------------------|-----------------|
 | 1.0.x   | Development | Internal Testing | not supported   |
+| 1.1.x   | Development | Internal Testing | not supported   |
+| 1.2.x   | Development | Internal Testing | not supported   |
+| 1.3.x   | Development | Internal Testing | TBD             |
+| 1.4.x   | Development | Internal Testing | TBD             |
 
 #### Stage (maturity of the release)
 

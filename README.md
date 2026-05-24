@@ -25,8 +25,8 @@ A tiny Laravel package that lets you attach human‑friendly labels to your rout
 
 ## Requirements
 
-- **PHP**: 8.2, 8.3, 8.4
-- **Laravel**: 10.x, 11.x, 12.x (Illuminate Support/View/Routing)
+- **PHP**: 8.3, 8.4
+- **Laravel**: 10.x, 11.x, 12.x, 13.x (Illuminate Support/View/Routing)
 
 ## Installation
 

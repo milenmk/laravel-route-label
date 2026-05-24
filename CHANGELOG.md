@@ -1,3 +1,10 @@
+## v1.4.0
+
+#### Published: 2026-05-24
+
+- [IMPROVEMENT] Add support for Laravel 13.x
+- [FEATURE] Remove support for PHP 8.2
+
 ## v1.3.0
 
 #### Published at: 2025-12-24
